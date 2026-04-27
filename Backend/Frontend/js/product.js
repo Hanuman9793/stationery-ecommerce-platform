@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actions
     document.getElementById('btn-add-cart').addEventListener('click', handleAddToCart);
     document.getElementById('btn-wishlist').addEventListener('click', handleAddToWishlist);
-    
+
     // Review form setup
     if (isAuthenticated()) {
         document.getElementById('add-review-box').style.display = 'block';
@@ -37,20 +37,22 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadProduct() {
     try {
         const p = await fetchAPI(`/products/${productId}`);
-        
+
         document.title = `${p.name} | Stationery Shop`;
         document.getElementById('p-name').innerText = p.name;
         document.getElementById('p-cat').innerText = p.category || 'General';
         document.getElementById('p-price').innerText = `₹${p.price.toFixed(2)}`;
         document.getElementById('p-desc').innerText = p.description || '';
-        document.getElementById('p-img').src = p.image || 'https://via.placeholder.com/600?text=No+Image';
+        document.getElementById('p-img').src = p.image
+            ? `/images/${p.image}`
+            : 'https://via.placeholder.com/600?text=No+Image';
         document.getElementById('p-img').alt = p.name;
 
         // Stock handling
         maxStock = p.stock;
         const stockBadge = document.getElementById('p-stock');
         const cartBtn = document.getElementById('btn-add-cart');
-        
+
         if (p.stock > 0) {
             stockBadge.innerText = `In Stock (${p.stock})`;
             stockBadge.className = 'stock-badge';
@@ -66,7 +68,7 @@ async function loadProduct() {
 
         // Ratings header
         document.getElementById('p-stars').innerHTML = generateStars(p.rating);
-        document.getElementById('p-ratings-count').innerText = `(${p.numReviews} review${p.numReviews!==1?'s':''})`;
+        document.getElementById('p-ratings-count').innerText = `(${p.numReviews} review${p.numReviews !== 1 ? 's' : ''})`;
 
         // Load Reviews array
         renderReviews(p.reviews);
@@ -89,11 +91,11 @@ function renderReviews(reviews) {
 
     list.innerHTML = '';
     // Sort by newest first
-    reviews.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     reviews.forEach(r => {
         const date = new Date(r.createdAt || Date.now()).toLocaleDateString();
-        
+
         const card = document.createElement('div');
         card.className = 'review-card';
         card.innerHTML = `
@@ -112,7 +114,7 @@ function renderReviews(reviews) {
 
 function generateStars(rating) {
     let result = '';
-    for(let i=1; i<=5; i++) {
+    for (let i = 1; i <= 5; i++) {
         if (i <= rating) result += '<i class="fas fa-star"></i>';
         else if (i - 0.5 <= rating) result += '<i class="fas fa-star-half-alt"></i>';
         else result += '<i class="far fa-star"></i>';
@@ -134,7 +136,7 @@ async function handleAddToCart() {
     const qty = parseInt(document.getElementById('qty').value);
     const btn = document.getElementById('btn-add-cart');
     const originalText = btn.innerHTML;
-    
+
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
     btn.disabled = true;
 
@@ -159,7 +161,7 @@ async function handleAddToWishlist() {
         return;
     }
     const btn = document.getElementById('btn-wishlist');
-    
+
     try {
         await fetchAPI('/wishlist/add', {
             method: 'POST',
@@ -169,9 +171,9 @@ async function handleAddToWishlist() {
         btn.innerHTML = '<i class="fas fa-heart" style="color:var(--danger)"></i>';
     } catch (err) {
         if (err.message.includes('already')) {
-           showToast('Product already in wishlist', 'error'); 
+            showToast('Product already in wishlist', 'error');
         } else {
-           showToast(err.message, 'error');
+            showToast(err.message, 'error');
         }
     }
 }
@@ -192,7 +194,7 @@ async function handleReviewSubmit(e) {
             body: { rating, comment }
         });
         showToast('Review submitted successfully!');
-        
+
         // Reload to show the new review
         setTimeout(() => location.reload(), 1000);
     } catch (err) {

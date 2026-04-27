@@ -44,7 +44,7 @@ async function loadProduct() {
         document.getElementById('p-price').innerText = `₹${p.price.toFixed(2)}`;
         document.getElementById('p-desc').innerText = p.description || '';
         document.getElementById('p-img').src = p.image
-            ? `/images/${p.image}`
+            ? p.image
             : 'https://via.placeholder.com/600?text=No+Image';
         document.getElementById('p-img').alt = p.name;
 

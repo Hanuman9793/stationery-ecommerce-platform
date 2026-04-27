@@ -42,6 +42,16 @@ async function fetchAPI(endpoint, options = {}) {
 
     try {
         const response = await fetch(`${API_URL}${endpoint}`, config);
+        
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            let errReason = "Server Error";
+            if (response.status === 404) errReason = "API Endpoint Not Found";
+            else if (response.status === 502) errReason = "Bad Gateway (Server might be down)";
+            throw new Error(`${errReason} (${response.status}). Is backend running?`);
+        }
+
         const data = await response.json();
 
         if (!response.ok) {

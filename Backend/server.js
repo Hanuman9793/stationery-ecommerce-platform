@@ -29,12 +29,11 @@ app.use("/api/coupons", require("./routes/couponRoutes"));
 app.use("/api/payments", require("./routes/paymentRoutes"));
 app.use("/api/subscribers", require("./routes/subscriberRoutes"));
 app.use("/api/delivery", require("./routes/deliveryRoutes"));
-
+app.use(express.static(path.join(__dirname, "Frontend")));
 // Test route
 app.get("/", (req, res) => {
-  res.send("API Running");
+  res.sendFile(path.join(__dirname, "Frontend", "index.html"));
 });
-
 app.get("/api/profile", authMiddleware, (req, res) => {
   res.json({
     message: "Protected data",

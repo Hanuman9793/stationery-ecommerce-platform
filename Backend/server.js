@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/images", express.static(path.join(__dirname, "public", "images")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/cart", require("./routes/cartRoutes"));

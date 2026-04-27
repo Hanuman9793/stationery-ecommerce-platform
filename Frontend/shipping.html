@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Policy | Soni Book Stall</title>
+    <meta name="description"
+        content="Learn about Soni Book Stall's shipping areas, delivery times, charges, and policies.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .page-hero {
+            background: var(--accent-main);
+            padding: 5rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            border: 1px solid rgba(184, 154, 90, 0.15);
+        }
+
+        .page-hero h1 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            color: #f0ebe2;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero h1 em {
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .page-hero p {
+            color: rgba(240, 235, 226, 0.65);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(240, 235, 226, 0.5);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb a {
+            color: var(--accent-gold);
+        }
+
+        .breadcrumb span {
+            color: rgba(240, 235, 226, 0.3);
+        }
+
+        .policy-section {
+            padding: 5rem 0;
+        }
+
+        .policy-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .policy-nav {
+            position: sticky;
+            top: 100px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+        }
+
+        .policy-nav h4 {
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            font-family: var(--font-main);
+            font-weight: 600;
+        }
+
+        .policy-nav a {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: color 0.2s ease;
+        }
+
+        .policy-nav a:last-child {
+            border-bottom: none;
+        }
+
+        .policy-nav a:hover {
+            color: var(--accent-gold);
+        }
+
+        .policy-content section {
+            margin-bottom: 3rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .policy-content section:last-child {
+            border-bottom: none;
+        }
+
+        .policy-content h2 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.7rem;
+            font-weight: 400;
+            color: var(--text-main);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .policy-content h2 i {
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+        }
+
+        .policy-content h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin: 1.5rem 0 0.6rem;
+        }
+
+        .policy-content p,
+        .policy-content li {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.85;
+        }
+
+        .policy-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .policy-content li {
+            margin-bottom: 0.4rem;
+        }
+
+        .info-box {
+            background: rgba(184, 154, 90, 0.07);
+            border-left: 4px solid var(--accent-gold);
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            line-height: 1.75;
+        }
+
+        .delivery-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .delivery-table th {
+            background: var(--bg-surface-hover);
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 0.9rem 1rem;
+            text-align: left;
+            border: 1px solid var(--border-color);
+            font-family: var(--font-main);
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .delivery-table td {
+            padding: 0.9rem 1rem;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .delivery-table tr:hover td {
+            background: var(--bg-surface-hover);
+        }
+
+        .td-free {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .policy-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .policy-nav {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><i class="fas fa-book-open"></i>&nbsp; Soni<span>&</span>Stall</a>
+            <div class="nav-links">
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="orders.html" class="nav-link">Orders</a>
+                <a href="cart.html" class="nav-link"><i class="fas fa-shopping-bag"></i></a>
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme"><i class="fas fa-moon"
+                        id="theme-icon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-hero">
+        <div class="container" style="position:relative; z-index:1;">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>Shipping Policy</span>
+            </div>
+            <h1>Shipping <em>Policy</em></h1>
+            <p>Transparent information about how we deliver to your doorstep.</p>
+        </div>
+    </div>
+
+    <main>
+        <div class="policy-section">
+            <div class="container">
+                <div class="policy-layout">
+
+                    <!-- Sidebar Nav -->
+                    <div class="policy-nav">
+                        <h4>Contents</h4>
+                        <a href="#delivery-area">Delivery Area</a>
+                        <a href="#delivery-time">Delivery Time</a>
+                        <a href="#charges">Delivery Charges</a>
+                        <a href="#process">Order Process</a>
+                        <a href="#unavailable">Service Unavailable</a>
+                        <a href="#contact">Contact Us</a>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="policy-content">
+
+                        <section id="delivery-area">
+                            <h2><i class="fas fa-map-marker-alt"></i> Delivery Area</h2>
+                            <p>At Soni Book Stall, we currently offer home delivery to select areas within our local
+                                zone in and around:</p>
+                            <ul>
+                                <li>Renukoot Colony</li>
+                                <li>Hindalco Colony</li>
+                                <li>Renukoot, Uttar Pradesh – 231217</li>
+                                <li>Surrounding localities (contact us to confirm)</li>
+                            </ul>
+                            <div class="info-box">
+                                <i class="fas fa-info-circle" style="color:var(--accent-gold); margin-right:8px;"></i>
+                                <strong>Important:</strong> Orders placed from outside our delivery zone may be
+                                cancelled and refunded in full. Please contact us before ordering if you are unsure
+                                about your area.
+                            </div>
+                        </section>
+
+                        <section id="delivery-time">
+                            <h2><i class="fas fa-clock"></i> Delivery Time</h2>
+                            <h3>Standard Delivery</h3>
+                            <p>Orders are typically delivered within <strong>1–2 business days</strong> of order
+                                confirmation. Business days are Monday through Saturday, 9:00 AM – 8:00 PM.</p>
+                            <h3>Same-Day Delivery</h3>
+                            <p>Same-day delivery may be available for select areas when ordered before 12:00 PM. Contact
+                                us at <a href="tel:+919838491752">+91 98384 91752</a> to arrange same-day service.</p>
+                            <h3>Delays</h3>
+                            <p>Delivery times may be affected by local holidays, weather conditions, or high-demand
+                                periods. We will notify you if your order is delayed.</p>
+                        </section>
+
+                        <section id="charges">
+                            <h2><i class="fas fa-rupee-sign"></i> Delivery Charges</h2>
+                            <table class="delivery-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order Value</th>
+                                        <th>Delivery Charge</th>
+                                        <th>Estimated Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Below ₹100</td>
+                                        <td>₹40</td>
+                                        <td>1–2 business days</td>
+                                    </tr>
+                                    <tr>
+                                        <td>₹100 and above</td>
+                                        <td class="td-free">FREE</td>
+                                        <td>1–2 business days</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <section id="process">
+                            <h2><i class="fas fa-tasks"></i> Order Processing</h2>
+                            <p>Once you place an order:</p>
+                            <ul>
+                                <li>You receive an order reference number on-screen immediately.</li>
+                                <li>Our team reviews and confirms your order within a few hours.</li>
+                                <li>For UPI payments, we verify your UTR number before confirming.</li>
+                                <li>Your order is packed and dispatched on the same or next business day.</li>
+                            </ul>
+                            <p>You can track your order status from the <a href="orders.html">My Orders</a> page at any
+                                time.</p>
+                        </section>
+
+                        <section id="unavailable">
+                            <h2><i class="fas fa-ban"></i> Service Unavailable</h2>
+                            <p>If we are unable to fulfil your order due to being outside our delivery zone or any other
+                                reason, we will contact you within 24 hours. A full refund will be issued if payment was
+                                made in advance.</p>
+                        </section>
+
+                        <section id="contact">
+                            <h2><i class="fas fa-headset"></i> Contact Us</h2>
+                            <p>For any shipping-related queries, reach out to us:</p>
+                            <ul>
+                                <li><strong>Email:</strong> <a
+                                        href="mailto:inkandpaper97@gmail.com">inkandpaper97@gmail.com</a></li>
+                                <li><strong>Phone/WhatsApp:</strong> <a href="tel:+919838491752">+91 98384 91752</a>
+                                </li>
+                                <li><strong>Hours:</strong> Mon – Sat, 9:00 AM – 8:00 PM</li>
+                            </ul>
+                        </section>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="nav-logo" style="margin-bottom:1.4rem; display:inline-flex;"><i
+                            class="fas fa-book-open"></i>&nbsp; Soni<span>&</span>Stall</a>
+                    <p style="max-width:280px; line-height:1.8; margin-top:0.5rem;">Your trusted neighbourhood book and
+                        stationery store in Renukoot, UP.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="shop.html">All Products</a>
+                    <a href="shop.html?cat=Pens">Fine Pens</a>
+                    <a href="shop.html?cat=Notebooks">Journals</a>
+                    <a href="shop.html?cat=Paper">Paper</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="faq.html">FAQ</a>
+                    <a href="shipping.html">Shipping Policy</a>
+                    <a href="returns.html">Returns</a>
+                    <a href="track.html">Track Order</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p><a href="mailto:inkandpaper97@gmail.com">inkandpaper97@gmail.com</a></p>
+                    <p><a href="tel:+919838491752">+91 98384 91752</a></p>
+                    <p style="margin-top:0.5rem; font-size:0.82rem; letter-spacing:0.04em; text-transform:uppercase;">
+                        Mon – Sat, 9am – 8pm</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Soni Book Stall. All rights reserved.
+                &ensp;&mdash;&ensp;
+                <a href="shipping.html" style="color:var(--text-muted);">Shipping</a>
+                &ensp;&middot;&ensp;
+                <a href="returns.html" style="color:var(--text-muted);">Returns</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+</body>
+
+</html>

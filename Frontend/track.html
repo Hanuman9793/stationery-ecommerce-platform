@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order | Soni Book Stall</title>
+    <meta name="description" content="Track your Soni Book Stall order using your order reference number.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .page-hero {
+            background: var(--accent-main);
+            padding: 5rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            border: 1px solid rgba(184, 154, 90, 0.15);
+        }
+
+        .page-hero h1 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            color: #f0ebe2;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero h1 em {
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .page-hero p {
+            color: rgba(240, 235, 226, 0.65);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(240, 235, 226, 0.5);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb a {
+            color: var(--accent-gold);
+        }
+
+        .breadcrumb span {
+            color: rgba(240, 235, 226, 0.3);
+        }
+
+        .track-section {
+            padding: 5rem 0;
+        }
+
+        .track-box {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .search-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .search-card h2 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-card p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .search-row input {
+            flex: 1;
+        }
+
+        .search-row button {
+            white-space: nowrap;
+        }
+
+        /* Timeline */
+        .result-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .result-ref {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .result-ref span {
+            font-family: monospace;
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+        }
+
+        .result-amount {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            bottom: 8px;
+            width: 1px;
+            background: var(--border-color);
+        }
+
+        .timeline-step {
+            position: relative;
+            margin-bottom: 1.8rem;
+            opacity: 0.4;
+        }
+
+        .timeline-step.done {
+            opacity: 1;
+        }
+
+        .timeline-step.active {
+            opacity: 1;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -2.5rem;
+            top: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+        }
+
+        .timeline-step.done .timeline-dot {
+            background: var(--success);
+            border-color: var(--success);
+            color: #fff;
+        }
+
+        .timeline-step.active .timeline-dot {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            color: #1a1714;
+            box-shadow: 0 0 0 4px rgba(184, 154, 90, 0.2);
+        }
+
+        .timeline-step.cancelled .timeline-dot {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #fff;
+        }
+
+        .timeline-step.cancelled {
+            opacity: 1;
+        }
+
+        .timeline-label {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .timeline-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        /* Items */
+        .order-items {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .order-items h4 {
+            font-size: 0.78rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-family: var(--font-main);
+            font-weight: 600;
+        }
+
+        .order-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .order-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-name {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .order-item-qty {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .login-note {
+            background: rgba(184, 154, 90, 0.07);
+            border-left: 4px solid var(--accent-gold);
+            padding: 1.2rem 1.5rem;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            margin-top: 1.5rem;
+        }
+
+        #track-error {
+            display: none;
+            color: var(--danger);
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.92rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><i class="fas fa-book-open"></i>&nbsp; Soni<span>&</span>Stall</a>
+            <div class="nav-links">
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="orders.html" class="nav-link">My Orders</a>
+                <a href="cart.html" class="nav-link"><i class="fas fa-shopping-bag"></i></a>
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme"><i class="fas fa-moon"
+                        id="theme-icon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-hero">
+        <div class="container" style="position:relative; z-index:1;">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>Track Order</span>
+            </div>
+            <h1>Track Your <em>Order</em></h1>
+            <p>Enter your order reference number to get a live status update on your delivery.</p>
+        </div>
+    </div>
+
+    <main>
+        <div class="track-section">
+            <div class="container">
+                <div class="track-box">
+
+                    <div class="search-card">
+                        <h2>Order Lookup</h2>
+                        <p>Find your order reference number in the confirmation screen after checkout, or from <a
+                                href="orders.html">My Orders</a> if you are logged in.</p>
+                        <div class="search-row">
+                            <input type="text" id="track-input" class="form-control" placeholder="e.g. A1B2C3D4"
+                                style="text-transform:uppercase; letter-spacing:1px; font-family:monospace;">
+                            <button class="btn btn-gold" onclick="trackOrder()" id="track-btn">
+                                <i class="fas fa-search"></i> Track
+                            </button>
+                        </div>
+                        <div id="track-error">Order not found. Please check your reference number and try again.</div>
+                        <div class="login-note">
+                            <i class="fas fa-user-circle" style="color:var(--accent-gold); margin-right:8px;"></i>
+                            <strong>Logged in?</strong> View all your orders with full details on the <a
+                                href="orders.html">My Orders</a> page.
+                        </div>
+                    </div>
+
+                    <!-- Result -->
+                    <div class="result-card" id="result-card">
+                        <div class="result-header">
+                            <div>
+                                <div
+                                    style="font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-gold); margin-bottom:0.4rem;">
+                                    Order Reference</div>
+                                <div class="result-ref">Order #<span id="res-ref"></span></div>
+                                <div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;" id="res-date">
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div
+                                    style="font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-gold); margin-bottom:0.4rem;">
+                                    Total</div>
+                                <div class="result-amount" id="res-amount"></div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline -->
+                        <div class="timeline" id="res-timeline"></div>
+
+                        <!-- Items -->
+                        <div class="order-items">
+                            <h4>Items in this order</h4>
+                            <div id="res-items"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="nav-logo" style="margin-bottom:1.4rem; display:inline-flex;"><i
+                            class="fas fa-book-open"></i>&nbsp; Soni<span>&</span>Stall</a>
+                    <p style="max-width:280px; line-height:1.8; margin-top:0.5rem;">Your trusted neighbourhood book and
+                        stationery store in Renukoot, UP.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="shop.html">All Products</a>
+                    <a href="shop.html?cat=Pens">Fine Pens</a>
+                    <a href="shop.html?cat=Notebooks">Journals</a>
+                    <a href="shop.html?cat=Paper">Paper</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="faq.html">FAQ</a>
+                    <a href="shipping.html">Shipping Policy</a>
+                    <a href="returns.html">Returns</a>
+                    <a href="track.html">Track Order</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p><a href="mailto:inkandpaper97@gmail.com">inkandpaper97@gmail.com</a></p>
+                    <p><a href="tel:+919838491752">+91 98384 91752</a></p>
+                    <p style="margin-top:0.5rem; font-size:0.82rem; letter-spacing:0.04em; text-transform:uppercase;">
+                        Mon – Sat, 9am – 8pm</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Soni Book Stall. All rights reserved.
+                &ensp;&mdash;&ensp;
+                <a href="shipping.html" style="color:var(--text-muted);">Shipping</a>
+                &ensp;&middot;&ensp;
+                <a href="returns.html" style="color:var(--text-muted);">Returns</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script>
+        const STATUS_FLOW = [
+            { key: 'Placed', label: 'Order Placed', desc: 'Your order has been received.' },
+            { key: 'Confirmed', label: 'Confirmed', desc: 'We have confirmed your order.' },
+            { key: 'Packed', label: 'Packed', desc: 'Your items are packed and ready.' },
+            { key: 'Shipped', label: 'Out for Delivery', desc: 'Your order is on its way!' },
+            { key: 'Delivered', label: 'Delivered', desc: 'Delivered successfully. Enjoy!' },
+        ];
+
+        document.getElementById('track-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') trackOrder();
+        });
+
+        async function trackOrder() {
+            const raw = document.getElementById('track-input').value.trim().toUpperCase();
+            if (!raw) return;
+
+            const btn = document.getElementById('track-btn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+            btn.disabled = true;
+            document.getElementById('track-error').style.display = 'none';
+            document.getElementById('result-card').style.display = 'none';
+
+            try {
+                // Try to load from the logged-in user's orders first
+                let found = null;
+                try {
+                    const orders = await fetchAPI('/orders/mine');
+                    found = orders.find(o => o._id.slice(-8).toUpperCase() === raw);
+                } catch (e) {
+                    // Not logged in — try a public lookup by ref
+                }
+
+                if (!found) {
+                    // Fallback: ask the backend for a public lookup (if available)
+                    try {
+                        found = await fetchAPI(`/orders/track/${raw}`);
+                    } catch (e) { /* not found */ }
+                }
+
+                if (!found) throw new Error('Order not found');
+
+                showResult(found);
+            } catch (e) {
+                document.getElementById('track-error').style.display = 'block';
+            } finally {
+                btn.innerHTML = '<i class="fas fa-search"></i> Track';
+                btn.disabled = false;
+            }
+        }
+
+        function showResult(order) {
+            const status = order.status || 'Placed';
+            const isCancelled = status === 'Out of delivery area';
+
+            document.getElementById('res-ref').textContent = order._id.slice(-8).toUpperCase();
+            document.getElementById('res-date').textContent = 'Placed on ' + new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('res-amount').textContent = '₹' + order.totalPrice.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+            // Build timeline
+            const timeline = document.getElementById('res-timeline');
+            timeline.innerHTML = '';
+
+            if (isCancelled) {
+                const step = document.createElement('div');
+                step.className = 'timeline-step cancelled';
+                step.innerHTML = `
+                    <div class="timeline-dot"><i class="fas fa-times"></i></div>
+                    <div class="timeline-label">Order Cancelled</div>
+                    <div class="timeline-desc">This order is outside our delivery area and has been cancelled.</div>
+                `;
+                timeline.appendChild(step);
+            } else {
+                const currentIdx = STATUS_FLOW.findIndex(s => s.key === status);
+                STATUS_FLOW.forEach((s, i) => {
+                    const step = document.createElement('div');
+                    const isDone = i < currentIdx;
+                    const isActive = i === currentIdx;
+                    step.className = 'timeline-step' + (isDone ? ' done' : '') + (isActive ? ' active' : '');
+                    step.innerHTML = `
+                        <div class="timeline-dot">${isDone ? '<i class="fas fa-check"></i>' : (isActive ? '<i class="fas fa-circle" style="font-size:6px;"></i>' : '')}</div>
+                        <div class="timeline-label">${s.label}</div>
+                        <div class="timeline-desc">${isActive ? '▶ ' + s.desc : s.desc}</div>
+                    `;
+                    timeline.appendChild(step);
+                });
+            }
+
+            // Items
+            const itemsContainer = document.getElementById('res-items');
+            itemsContainer.innerHTML = '';
+            (order.items || []).forEach(item => {
+                const name = item.product ? item.product.name : 'Product';
+                const price = item.product ? item.product.price : 0;
+                const row = document.createElement('div');
+                row.className = 'order-item-row';
+                row.innerHTML = `
+                    <div>
+                        <div class="order-item-name">${name}</div>
+                        <div class="order-item-qty">Qty: ${item.quantity}</div>
+                    </div>
+                    <div style="font-weight:600">₹${(price * item.quantity).toFixed(2)}</div>
+                `;
+                itemsContainer.appendChild(row);
+            });
+
+            document.getElementById('result-card').style.display = 'block';
+            document.getElementById('result-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+
+</html>

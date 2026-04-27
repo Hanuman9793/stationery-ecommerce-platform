@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout | Ink&Paper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 3rem;
+            margin-top: 2rem;
+            align-items: start;
+        }
+
+        .checkout-box {
+            background: var(--bg-surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+        }
+
+        .section-title { font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+
+        /* Payment Radio Buttons */
+        .payment-method {
+            display: flex; align-items: center; gap: 15px; padding: 1rem;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            margin-bottom: 1rem; cursor: pointer; transition: 0.2s;
+        }
+        .payment-method:hover { border-color: var(--accent-main); }
+        .payment-method input[type="radio"] { transform: scale(1.2); accent-color: var(--accent-main); }
+        .pay-icon { font-size: 1.5rem; color: var(--text-muted); width: 30px; text-align: center; }
+
+        /* Small cart strip */
+        .order-summary-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.95rem; }
+        .order-summary-item img { width: 50px; height: 50px; object-fit: contain; background: var(--bg-main); border-radius: 4px; }
+        
+        .summary-total { display: flex; justify-content: space-between; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
+
+        @media (max-width: 900px) {
+            .checkout-layout { grid-template-columns: 1fr; flex-direction: column-reverse; display: flex; }
+            .checkout-box { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-lock"></i> Secure Checkout
+            </a>
+            <a href="cart.html" class="text-muted"><i class="fas fa-arrow-left"></i> Back to Cart</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        
+        <div id="loading" class="loader"></div>
+        <div id="error-message" class="text-danger text-center"></div>
+
+        <div class="checkout-layout" id="checkout-content" style="display: none;">
+            
+            <!-- Left: Form -->
+            <div class="checkout-box">
+                <form id="checkout-form">
+                    
+                    <div style="background: rgba(184, 154, 90, 0.1); border-left: 4px solid var(--accent-gold); padding: 1rem; margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-main);">
+                        <i class="fas fa-info-circle" style="color: var(--accent-gold); margin-right: 8px;"></i>
+                        <strong>Delivery Notice:</strong> Delivery is available only for selected areas in up banaras. Orders outside our delivery area may be cancelled by the admin. sorry for your inconvince
+                    </div>
+
+                    <h3 class="section-title">1. Shipping details</h3>
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="ship-name" class="form-control" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Village Name</label>
+                        <input type="text" id="ship-village" class="form-control" required placeholder="e.g. Banaras">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Landmark / Full Address</label>
+                        <input type="text" id="ship-address" class="form-control" required placeholder="e.g. Near Shri Ram Rekha Singh Inter College">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" id="ship-city" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pincode / ZIP</label>
+                            <input type="text" id="ship-zip" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" id="ship-phone" class="form-control" required>
+                    </div>
+
+                    <h3 class="section-title mt-4">2. Payment Method</h3>
+                    
+                    <label class="payment-method">
+                        <input type="radio" name="paymentType" value="cod" checked onchange="toggleUpiFields()">
+                        <i class="fas fa-truck pay-icon"></i>
+                        <div>
+                            <strong style="display:block">Cash on Delivery</strong>
+                            <small class="text-muted">Pay comfortably when your package arrives.</small>
+                        </div>
+                    </label>
+                    <label class="payment-method">
+                        <input type="radio" name="paymentType" value="upi" onchange="toggleUpiFields()">
+                        <i class="fas fa-qrcode pay-icon"></i>
+                        <div>
+                            <strong style="display:block">UPI Payment</strong>
+                            <small class="text-muted">Instant transfer via Google Pay, PhonePe, Paytm.</small>
+                        </div>
+                    </label>
+
+                    <div id="upi-details" style="display: none; padding: 1.5rem; background: var(--bg-main); border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+                        <p style="margin-bottom:1rem; font-size:0.95rem;">Please transfer exactly <strong id="upi-transfer-amount" class="text-main"></strong> to the UPI ID below:</p>
+                        <div style="font-size: 1.2rem; font-weight: 700; font-family: monospace; text-align: center; color: var(--accent-main); padding: 1rem; border: 2px dashed var(--accent-main); border-radius: var(--radius-sm); margin-bottom: 1rem;">
+                            marshal9793@oksbi
+                        </div>
+                        <div class="form-group mb-1">
+                            <label class="form-label">Enter 12-Digit UTR / Reference Number</label>
+                            <input type="text" id="pay-utr" class="form-control" placeholder="e.g. 123456789012" minlength="12" maxlength="12">
+                        </div>
+                        <small class="text-danger" style="display:block" id="upi-error"></small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" style="height: 54px; margin-top: 2rem;" id="btn-submit">
+                        Complete Order
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right: Order Summary box -->
+            <div class="checkout-box" style="position: sticky; top: 100px;">
+                <h3 class="section-title">Order Summary</h3>
+                <div id="summary-items"></div>
+
+                <!-- Coupon Section -->
+                <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <div id="applied-coupon" style="display:none; background:rgba(184, 154, 90,0.1); padding:0.8rem; border-radius:4px; margin-bottom:1rem; border:1px dashed var(--accent-gold);">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span id="coupon-tag" style="font-weight:700; color:var(--accent-gold); font-size:0.85rem"></span>
+                            <button onclick="removeCoupon()" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div id="coupon-form" style="display:flex; gap:8px;">
+                        <input type="text" id="coupon-code" class="form-control" placeholder="Promo Code" style="padding:0.6rem; font-size:0.85rem; text-transform:uppercase">
+                        <button type="button" class="btn btn-outline" style="padding:0.6rem 1rem;" onclick="applyCoupon()">Apply</button>
+                    </div>
+                    <small id="coupon-msg" style="display:block; margin-top:5px; font-size:0.75rem"></small>
+                </div>
+                
+                <div style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <div class="summary-line" style="display:flex; justify-content:space-between; color:var(--text-muted); margin-bottom:0.5rem">
+                        <span>Subtotal</span>
+                        <span id="summary-subtotal">₹0.00</span>
+                    </div>
+                    <div class="summary-line" style="display:flex; justify-content:space-between; color:var(--text-muted); margin-bottom:0.8rem">
+                        <span>Delivery Charge</span>
+                        <span id="summary-delivery">₹0.00</span>
+                    </div>
+                </div>
+
+                <div class="summary-total" style="border-top: 2px solid var(--border-color); padding-top: 1rem;">
+                    <span>Total</span>
+                    <span id="final-total">₹0.00</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        let cartData = null;
+        let finalAmount = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            if(!isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Auto-fill available user data
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(user) document.getElementById('ship-name').value = user.name;
+
+            loadCheckoutData();
+            document.getElementById('checkout-form').addEventListener('submit', processOrder);
+        });
+
+        let subtotalOriginal = 0;
+        let discountAmount = 0;
+        let appliedCouponCode = null;
+
+        async function loadCheckoutData() {
+            const loading = document.getElementById('loading');
+            try {
+                cartData = await fetchAPI('/cart');
+                loading.style.display = 'none';
+
+                if (!cartData || cartData.length === 0) {
+                    document.getElementById('error-message').innerHTML = `
+                        <h3>Your cart is empty</h3>
+                        <a href="shop.html" class="btn btn-primary mt-2">Go to Shop</a>
+                    `;
+                    return;
+                }
+
+                document.getElementById('checkout-content').style.display = 'grid';
+                renderSummary();
+
+            } catch(err) {
+                loading.style.display = 'none';
+                document.getElementById('error-message').innerText = err.message;
+            }
+        }
+
+        function renderSummary() {
+            const summaryContainer = document.getElementById('summary-items');
+            summaryContainer.innerHTML = '';
+            subtotalOriginal = 0;
+
+            cartData.forEach(item => {
+                if (!item.product) return; 
+                const lineTotal = item.product.price * item.quantity;
+                subtotalOriginal += lineTotal;
+
+                const div = document.createElement('div');
+                div.className = 'order-summary-item';
+                const blend = document.documentElement.getAttribute('data-theme') === 'light' ? 'mix-blend-mode:multiply' : '';
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <img src="${item.product.image}" style="${blend}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1529539795054-3c162aab037a?auto=format&fit=crop&w=500&q=80';">
+                        <div>
+                            <div style="font-weight:600">${item.product.name.substring(0,25)}</div>
+                            <div class="text-muted" style="font-size:0.8rem">Qty: ${item.quantity} × ₹${item.product.price.toFixed(2)}</div>
+                        </div>
+                    </div>
+                    <div style="font-weight:600">₹${lineTotal.toFixed(2)}</div>
+                `;
+                summaryContainer.appendChild(div);
+            });
+
+            updateTotals();
+        }
+
+        function updateTotals() {
+            // Rule: Delivery charge ₹40 IF subtotalBeforeDiscount < 100
+            const deliveryCharge = subtotalOriginal < 100 ? 40 : 0;
+            
+            // Note: user said "no after discount if it decrese from 100 dont chare delivery charge"
+            // This is already covered because deliveryCharge is based on subtotalOriginal.
+
+            finalAmount = subtotalOriginal + deliveryCharge - discountAmount;
+
+            document.getElementById('summary-subtotal').innerText = `₹${subtotalOriginal.toFixed(2)}`;
+            document.getElementById('summary-delivery').innerText = deliveryCharge > 0 ? `₹${deliveryCharge.toFixed(2)}` : 'FREE';
+            
+            const delEl = document.getElementById('summary-delivery');
+            delEl.className = deliveryCharge > 0 ? 'text-danger' : 'text-success';
+
+            document.getElementById('final-total').innerText = `₹${Math.max(0, finalAmount).toFixed(2)}`;
+            document.getElementById('upi-transfer-amount').innerText = `₹${Math.max(0, finalAmount).toFixed(2)}`;
+        }
+
+        async function applyCoupon() {
+            const code = document.getElementById('coupon-code').value.trim();
+            const msg = document.getElementById('coupon-msg');
+            if(!code) return;
+
+            try {
+                const res = await fetchAPI('/coupons/apply', {
+                    method: 'POST',
+                    body: { code, orderAmount: subtotalOriginal }
+                });
+
+                discountAmount = res.discountAmount;
+                appliedCouponCode = res.code;
+
+                document.getElementById('coupon-form').style.display = 'none';
+                document.getElementById('applied-coupon').style.display = 'block';
+                document.getElementById('coupon-tag').innerText = `CODE: ${appliedCouponCode} (-₹${discountAmount.toFixed(2)})`;
+                msg.innerText = 'Coupon applied!';
+                msg.className = 'text-success';
+                
+                updateTotals();
+            } catch(err) {
+                msg.innerText = err.message;
+                msg.className = 'text-danger';
+            }
+        }
+
+        function removeCoupon() {
+            discountAmount = 0;
+            appliedCouponCode = null;
+            document.getElementById('coupon-form').style.display = 'flex';
+            document.getElementById('applied-coupon').style.display = 'none';
+            document.getElementById('coupon-msg').innerText = '';
+            document.getElementById('coupon-code').value = '';
+            updateTotals();
+        }
+
+        function toggleUpiFields() {
+            const isUpi = document.querySelector('input[name="paymentType"]:checked').value === 'upi';
+            document.getElementById('upi-details').style.display = isUpi ? 'block' : 'none';
+            document.getElementById('pay-utr').required = isUpi;
+        }
+
+        async function processOrder(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking Delivery Area...';
+            btn.disabled = true;
+
+            const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
+            const utr = document.getElementById('pay-utr').value;
+            const village = document.getElementById('ship-village').value;
+            const address = document.getElementById('ship-address').value;
+            const city = document.getElementById('ship-city').value;
+            const zip = document.getElementById('ship-zip').value;
+            const phone = document.getElementById('ship-phone').value;
+
+            if(paymentType === 'upi' && utr.length < 12) {
+                document.getElementById('upi-error').innerText = 'Valid 12-digit UTR is required.';
+                resetBtn(); return;
+            }
+
+            // Mobile Validation (10 digits)
+            const phoneRegex = /^[0-9]{10}$/;
+            if(!phoneRegex.test(phone)) {
+                showToast('Please enter a valid 10-digit mobile number.', 'error');
+                resetBtn(); return;
+            }
+
+            try {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
+
+                const addressFull = `${village}, ${address}, ${city} - ${zip}`;
+                
+                const payload = {
+                    shippingAddress: {
+                        fullName: document.getElementById('ship-name').value,
+                        address: addressFull,
+                        city: city,
+                        pincode: zip,
+                        phone: phone
+                    },
+                    couponCode: appliedCouponCode
+                };
+
+                // 2. Place the order
+                const orderRes = await fetchAPI('/orders', {
+                    method: 'POST',
+                    body: payload
+                });
+
+                const orderId = orderRes.order._id;
+
+                // 2. Submit Payment linking to Order
+                await fetchAPI('/payments', {
+                    method: 'POST',
+                    body: {
+                        amount: finalAmount,
+                        method: paymentType,
+                        utrNumber: paymentType === 'upi' ? utr : null,
+                        orderId: orderId
+                    }
+                });
+
+                // Clear cart badge
+                const badge = document.getElementById('nav-cart-count');
+                if(badge) badge.innerText = '0';
+
+                // Success!
+                document.getElementById('checkout-content').innerHTML = `
+                    <div style="grid-column: span 2; text-align:center; padding: 4rem;">
+                        <i class="fas fa-check-circle text-success" style="font-size: 5rem; margin-bottom: 2rem;"></i>
+                        <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Order Successful!</h2>
+                        <p class="text-muted" style="font-size: 1.2rem; margin-bottom: 2rem;">Thank you for your purchase. We are preparing your elegant stationery.</p>
+                        <div style="background: var(--bg-surface-hover); padding: 1.5rem; border-radius: var(--radius-md); display:inline-block; margin-bottom: 2rem; border:1px dashed var(--border-color)">
+                            Order Reference: <strong style="font-family:monospace; font-size:1.2rem; letter-spacing:1px; margin-left:10px;">${orderId.slice(-8).toUpperCase()}</strong>
+                        </div>
+                        <br>
+                        <a href="index.html" class="btn btn-primary" style="padding: 1rem 2rem;">Return Home</a>
+                    </div>
+                `;
+
+            } catch(err) {
+                resetBtn();
+                showToast(err.message, 'error');
+            }
+
+            function resetBtn() {
+                btn.innerHTML = 'Complete Order';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Ink&Paper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .product-page {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 2rem;
+            align-items: start;
+        }
+
+        .product-gallery {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: crosshair;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+        }
+        
+        [data-theme="light"] .main-image { mix-blend-mode: multiply; }
+        [data-theme="dark"] .main-image { mix-blend-mode: multiply; filter: none; }
+        [data-theme="dark"] .product-gallery { background-color: #e6e2f1; }
+
+        .product-gallery:hover .main-image { transform: scale(2); }
+
+        .product-details { display: flex; flex-direction: column; gap: 1.5rem; }
+        
+        .breadcrumb { font-size: 0.9rem; color: var(--text-muted); }
+        .breadcrumb a { color: var(--text-muted); }
+        .breadcrumb a:hover { color: var(--accent-main); }
+
+        .prod-title { font-size: 2.5rem; line-height: 1.2; margin: 0; }
+        .prod-brand { color: var(--accent-main); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        
+        .price-box { display: flex; align-items: baseline; gap: 15px; }
+        .prod-price { font-size: 2rem; font-weight: 800; }
+        .prod-stock { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .prod-stock.out { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        .qty-selector { display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: max-content; overflow: hidden; }
+        .qty-btn { background: var(--bg-surface); border: none; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; color: var(--text-main); }
+        .qty-btn:hover { background: var(--border-color); }
+        .qty-input { width: 50px; text-align: center; border: none; font-size: 1rem; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); height: 40px; }
+
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 1rem; }
+        
+        /* Bottom Section Tabs */
+        .bottom-section { margin-top: 5rem; border-top: 1px solid var(--border-color); padding-top: 4rem; }
+        .content-tabs { display: flex; gap: 2rem; border-bottom: 1px solid var(--border-color); margin-bottom: 2rem; }
+        .tab { padding: 10px 0; font-weight: 600; color: var(--text-muted); cursor: pointer; position: relative; }
+        .tab.active { color: var(--text-main); }
+        .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent-main); }
+        
+        .tab-content-box { line-height: 1.8; color: var(--text-muted); display: none; }
+        .tab-content-box.active { display: block; }
+        
+        #detail-desc {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 800px;
+        }
+
+        .standard-notice {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-surface-hover);
+            border-left: 3px solid var(--accent-gold);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Reviews Wrapper */
+        .review-item { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .review-item:last-child { border-bottom: none; }
+        .review-stars { color: var(--rating-color); margin-bottom: 0.5rem; }
+
+        @media (max-width: 900px) {
+            .product-page { grid-template-columns: 1fr; gap: 2rem; }
+            .action-buttons { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-pen-nib"></i> Ink<span>&</span>Paper
+            </a>
+            <div class="nav-links" id="auth-links"></div>
+        </div>
+    </nav>
+
+    <main class="container">
+        
+        <div id="loading" class="loader" style="display: none;"></div>
+        <div id="error-message" class="text-danger text-center mt-4"></div>
+
+        <div id="product-details-container" style="display: none;">
+            
+            <div class="product-page">
+                
+                <!-- Left: Zoom Gallery -->
+                <div class="product-gallery" id="gallery-box">
+                    <img id="detail-image" src="" alt="Product" class="main-image" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1529539795054-3c162aab037a?auto=format&fit=crop&w=500&q=80';">
+                </div>
+
+                <!-- Right: Details -->
+                <div class="product-details">
+                    <div class="breadcrumb">
+                        <a href="index.html">Home</a> / <a href="shop.html" id="bread-cat">Category</a> / <span id="bread-name" style="color:var(--text-main)">Product</span>
+                    </div>
+
+                    <div>
+                        <div class="prod-brand" id="detail-brand">BRAND</div>
+                        <h1 class="prod-title" id="detail-name">Product Name</h1>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span id="detail-stars" style="color:var(--rating-color)"></span> 
+                        <span class="text-muted" style="font-size:0.9rem" id="detail-review-count">(0 Reviews)</span>
+                    </div>
+
+                    <div class="price-box">
+                        <div class="prod-price" id="detail-price">₹0.00</div>
+                        <div id="detail-stock-badge" class="prod-stock"><i class="fas fa-check-circle"></i> In Stock</div>
+                    </div>
+
+                    <div style="border-top:1px solid var(--border-color); padding-top: 1.5rem;">
+                        <label class="form-label" style="margin-bottom:10px;">Quantity</label>
+                        <div class="qty-selector">
+                            <button class="qty-btn" id="btn-minus" onclick="updateQty(-1)">-</button>
+                            <input type="number" id="detail-qty" class="qty-input" value="1" min="1" readonly>
+                            <button class="qty-btn" id="btn-plus" onclick="updateQty(1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-outline btn-block" style="height: 54px;" id="btn-add-cart">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-primary btn-block" style="height: 54px;" id="btn-buy-now">
+                            <i class="fas fa-bolt"></i> Buy Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom: Description & Related -->
+            <div class="bottom-section">
+                <div class="content-tabs">
+                    <div class="tab active" onclick="switchTab('desc', this)">Product Description</div>
+                    <div class="tab" onclick="switchTab('reviews', this)" id="tab-reviews-label">Customer Reviews</div>
+                </div>
+                
+                <!-- Desc Content -->
+                <div class="tab-content-box active" id="content-desc" style="margin-bottom: 4rem;">
+                    <p id="detail-desc" style="white-space: pre-line;">Full product description goes here...</p>
+                </div>
+                
+                <!-- Reviews Content -->
+                <div class="tab-content-box" id="content-reviews" style="margin-bottom: 4rem;">
+                    
+                    <!-- Dynamic Reviews List -->
+                    <div id="reviews-list"></div>
+
+                    <!-- Add Review Form -->
+                    <div style="margin-top: 3rem; background: var(--bg-surface); padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <h4 style="margin-bottom:1rem;">Write a Review</h4>
+                        <div id="review-alert" style="margin-bottom: 1rem;"></div>
+                        <form id="review-form">
+                            <div class="form-group">
+                                <label class="form-label">Rating</label>
+                                <select id="review-rating" class="form-control" style="width:150px" required>
+                                    <option value="5">★★★★★ - Excellent</option>
+                                    <option value="4">★★★★☆ - Very Good</option>
+                                    <option value="3">★★★☆☆ - Average</option>
+                                    <option value="2">★★☆☆☆ - Poor</option>
+                                    <option value="1">★☆☆☆☆ - Terrible</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Your Comment</label>
+                                <textarea id="review-comment" class="form-control" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-submit-review">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 2rem;">Related Products</h3>
+                <div class="grid grid-cols-4 gap-4" id="related-products"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container text-center text-muted">
+            &copy; 2026 Ink&Paper Stationery Shop.
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script>
+        let currentProduct = null;
+        let qty = 1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavbar();
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (productId) {
+                fetchProductDetails(productId);
+            } else {
+                document.getElementById('error-message').innerText = 'Product not found.';
+            }
+
+            // Image Zoom effect logic
+            const gallery = document.getElementById('gallery-box');
+            const img = document.getElementById('detail-image');
+            
+            gallery.addEventListener('mousemove', (e) => {
+                const rect = gallery.getBoundingClientRect();
+                const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+                const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+                img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+            });
+            
+            gallery.addEventListener('mouseleave', () => img.style.transformOrigin = `center center`);
+
+            // Binding Action Buttons
+            document.getElementById('btn-add-cart').addEventListener('click', () => handleAdd(false));
+            document.getElementById('btn-buy-now').addEventListener('click', () => handleAdd(true));
+
+            // Review Submission
+            document.getElementById('review-form').addEventListener('submit', handleReviewSubmit);
+        });
+
+        // Tab Switching Logic
+        function switchTab(viewId, element) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content-box').forEach(c => c.classList.remove('active'));
+            
+            element.classList.add('active');
+            document.getElementById(`content-${viewId}`).classList.add('active');
+        }
+
+        async function fetchProductDetails(id) {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('product-details-container');
+            const errorMsg = document.getElementById('error-message');
+
+            loading.style.display = 'block';
+            
+            try {
+                const product = await fetchAPI(`/products/${id}`);
+                loading.style.display = 'none';
+                container.style.display = 'block';
+                currentProduct = product;
+
+                // Populate Texts
+                document.title = `${product.name || 'Product'} | Ink&Paper`;
+                document.getElementById('detail-image').src = product.image || '';
+                document.getElementById('detail-brand').innerText = product.brand || 'Premium Quality';
+                document.getElementById('detail-name').innerText = product.name || 'Stationery Item';
+                document.getElementById('detail-price').innerText = `₹${(product.price || 0).toFixed(2)}`;
+                
+                // Description Splitting for Standard Notice
+                const standardKey = "We offer books from multiple publishers";
+                const descEl = document.getElementById('detail-desc');
+                const description = product.description || '';
+                
+                if (description.includes(standardKey)) {
+                    const parts = description.split(standardKey);
+                    descEl.innerHTML = `${parts[0].trim()} <div class="standard-notice">${standardKey}${parts[1]}</div>`;
+                } else {
+                    descEl.innerText = description || 'No description available for this item.';
+                }
+
+                document.getElementById('bread-cat').innerText = product.category || 'Shop';
+                document.getElementById('bread-cat').href = `shop.html?cat=${product.category}`;
+                document.getElementById('bread-name').innerText = product.name.substring(0,20)+'...';
+
+                // Stock Logic
+                const stockBadge = document.getElementById('detail-stock-badge');
+                if (product.stock > 0) {
+                    stockBadge.innerHTML = `<i class="fas fa-check-circle"></i> In Stock (${product.stock})`;
+                    stockBadge.className = 'prod-stock';
+                } else {
+                    stockBadge.innerHTML = `<i class="fas fa-times-circle"></i> Out of Stock`;
+                    stockBadge.className = 'prod-stock out';
+                    document.getElementById('btn-add-cart').disabled = true;
+                    document.getElementById('btn-buy-now').disabled = true;
+                }
+
+                // Inject REAL Rating & Reviews
+                renderReviews(product);
+
+                // Fetch Related
+                fetchRelatedProducts(product.category, product._id);
+
+            } catch (err) {
+                loading.style.display = 'none';
+                errorMsg.innerText = err.message;
+            }
+        }
+
+        function renderReviews(product) {
+            // Render exact Stars
+            const starCount = Math.round(product.rating || 0);
+            let starHtml = '';
+            for(let i=0; i<5; i++) {
+                starHtml += i < starCount ? '★' : '☆';
+            }
+            document.getElementById('detail-stars').innerText = starHtml;
+            
+            // Labels
+            const reviewCount = product.numReviews || 0;
+            document.getElementById('detail-review-count').innerText = `(${reviewCount} Reviews)`;
+            document.getElementById('tab-reviews-label').innerText = `Customer Reviews (${reviewCount})`;
+
+            // Inject List
+            const listContainer = document.getElementById('reviews-list');
+            listContainer.innerHTML = '';
+
+            if(reviewCount === 0) {
+                listContainer.innerHTML = '<p class="text-muted" style="font-style:italic">No reviews available.</p>';
+                return;
+            }
+
+            // Descending Sort natively incase it isn't
+            const sortedReviews = product.reviews.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            sortedReviews.forEach(r => {
+                let rStars = '';
+                for(let i=0; i<5; i++) rStars += i < r.rating ? '★' : '☆';
+                
+                // Format Date nicely
+                const dateObj = new Date(r.createdAt);
+                
+                const div = document.createElement('div');
+                div.className = 'review-item';
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <strong style="color:var(--text-main)">${r.name}</strong>
+                        <small class="text-muted">${dateObj.toLocaleDateString()}</small>
+                    </div>
+                    <div class="review-stars">${rStars}</div>
+                    <p style="margin:0">${r.comment}</p>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        async function handleReviewSubmit(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('review-alert');
+            
+            if(!isAuthenticated()) {
+                alertBox.innerHTML = '<div class="text-danger">Please <a href="login.html" style="text-decoration:underline">Login</a> to submit a review.</div>';
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-review');
+            btn.disabled = true;
+            btn.innerText = 'Submitting...';
+
+            try {
+                await fetchAPI(`/products/${currentProduct._id}/reviews`, {
+                    method: 'POST',
+                    body: {
+                        rating: document.getElementById('review-rating').value,
+                        comment: document.getElementById('review-comment').value
+                    }
+                });
+
+                // Clear Form, give success alert, and instantly reload product
+                document.getElementById('review-form').reset();
+                alertBox.innerHTML = '<div class="text-success" style="font-weight:600;"><i class="fas fa-check"></i> Review submitted successfully!</div>';
+                
+                // Realtime UI refresh via fetch
+                fetchProductDetails(currentProduct._id);
+                
+            } catch(err) {
+                alertBox.innerHTML = `<div class="text-danger"><i class="fas fa-exclamation-circle"></i> ${err.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Submit Review';
+            }
+        }
+
+        // Qty & Cart logic
+        function updateQty(change) {
+            if(!currentProduct || currentProduct.stock <= 0) return;
+            const newQty = qty + change;
+            if (newQty >= 1 && newQty <= currentProduct.stock) {
+                qty = newQty;
+                document.getElementById('detail-qty').value = qty;
+            }
+        }
+
+        async function handleAdd(redirectCheckout) {
+            if (!isAuthenticated()) {
+                showToast('Please login to add items.', 'error');
+                setTimeout(() => window.location.href = 'login.html', 1500);
+                return;
+            }
+
+            const btnId = redirectCheckout ? 'btn-buy-now' : 'btn-add-cart';
+            const btn = document.getElementById(btnId);
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            try {
+                await fetchAPI('/cart/add', {
+                    method: 'POST',
+                    body: { productId: currentProduct._id, quantity: qty }
+                });
+                
+                updateCartCount();
+                
+                if(redirectCheckout) window.location.href = 'checkout.html';
+                else { showToast('Added to cart!'); btn.innerHTML = originalText; btn.disabled = false; }
+            } catch (err) {
+                btn.innerHTML = originalText; btn.disabled = false; showToast(err.message, 'error');
+            }
+        }
+
+        async function fetchRelatedProducts(category, skipId) {
+            try {
+                const res = await fetchAPI(`/products?category=${category}&limit=5`);
+                const container = document.getElementById('related-products');
+                container.innerHTML = '';
+                
+                const filtered = res.products.filter(p => p._id !== skipId).slice(0, 4);
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = '<p class="text-muted">No related items found.</p>'; return;
+                }
+
+                filtered.forEach(p => {
+                    const div = document.createElement('div'); div.className = 'product-card';
+                    div.innerHTML = `
+                        <a href="product.html?id=${p._id}" class="product-image-container" style="height: 180px;">
+                            <img src="${p.image}" class="product-image" style="mix-blend-mode:multiply" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1529539795054-3c162aab037a?auto=format&fit=crop&w=500&q=80';">
+                        </a>
+                        <div class="product-info" style="padding: 1rem;">
+                            <a href="product.html?id=${p._id}" class="product-name" style="font-size:0.9rem;">${p.name.substring(0,30)}...</a>
+                            <div class="product-price" style="font-size:1.1rem;">₹${p.price.toFixed(2)}</div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch(err) { console.error("Related Error:", err); }
+        }
+    </script>
+</body>
+</html>

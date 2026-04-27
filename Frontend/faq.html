@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | Soni Book Stall</title>
+    <meta name="description"
+        content="Frequently asked questions about orders, delivery, payments, and more at Soni Book Stall.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .page-hero {
+            background: var(--accent-main);
+            padding: 5rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            border: 1px solid rgba(184, 154, 90, 0.15);
+        }
+
+        .page-hero h1 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            color: #f0ebe2;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero h1 em {
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .page-hero p {
+            color: rgba(240, 235, 226, 0.65);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(240, 235, 226, 0.5);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb a {
+            color: var(--accent-gold);
+        }
+
+        .breadcrumb span {
+            color: rgba(240, 235, 226, 0.3);
+        }
+
+        .faq-section {
+            padding: 5rem 0;
+        }
+
+        .faq-category {
+            margin-bottom: 3.5rem;
+        }
+
+        .faq-category-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .faq-category-title i {
+            color: var(--accent-gold);
+            font-size: 1rem;
+        }
+
+        .faq-item {
+            border: 1px solid var(--border-color);
+            margin-bottom: 8px;
+            background: var(--bg-surface);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: var(--accent-gold);
+        }
+
+        .faq-item.open {
+            border-color: var(--accent-gold);
+        }
+
+        .faq-question {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-main);
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: left;
+            gap: 1rem;
+        }
+
+        .faq-icon {
+            color: var(--accent-gold);
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+
+        .faq-answer-inner {
+            padding: 0 1.5rem 1.4rem;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            line-height: 1.8;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 400px;
+        }
+
+        .contact-cta {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--accent-gold);
+            padding: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .contact-cta h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-cta p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .contact-cta-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.8rem 1.8rem;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .contact-link i {
+            color: var(--accent-gold);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><i class="fas fa-book-open"></i>&nbsp; Soni<span>&</span>Stall</a>
+            <div class="nav-links">
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="orders.html" class="nav-link">Orders</a>
+                <a href="cart.html" class="nav-link"><i class="fas fa-shopping-bag"></i></a>
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme"><i class="fas fa-moon"
+                        id="theme-icon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-hero">
+        <div class="container" style="position:relative; z-index:1;">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>FAQ</span>
+            </div>
+            <h1>Frequently Asked <em>Questions</em></h1>
+            <p>Everything you need to know about ordering, delivery, payments, and more.</p>
+        </div>
+    </div>
+
+    <main>
+        <div class="faq-section">
+            <div class="container">
+
+                <!-- Orders -->
+                <div class="faq-category">
+                    <h2 class="faq-category-title"><i class="fas fa-shopping-cart"></i> Orders</h2>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            How do I place an order?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">Browse our shop, add items to your cart, and proceed to
+                                checkout. Fill in your delivery details, choose your payment method (Cash on Delivery or
+                                UPI), and confirm your order. You'll receive an order reference number on screen.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Can I cancel or modify my order after placing it?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">Orders can be cancelled or modified before they are shipped.
+                                Please contact us immediately at <a
+                                    href="mailto:inkandpaper97@gmail.com">inkandpaper97@gmail.com</a> or call <a
+                                    href="tel:+919838491752">+91 98384 91752</a> with your order reference number.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            How do I track my order?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">You can track your order from the <a href="orders.html">My
+                                    Orders</a> page after logging in. Alternatively, visit our <a
+                                    href="track.html">Track Order</a> page and enter your order reference number.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            What is the minimum order value?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">There is no minimum order value. However, orders below ₹100
+                                will attract a delivery charge of ₹40. Orders of ₹100 and above enjoy free delivery
+                                within our delivery area.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery -->
+                <div class="faq-category">
+                    <h2 class="faq-category-title"><i class="fas fa-truck"></i> Delivery</h2>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Where do you deliver?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">We currently deliver to selected areas around Renukoot Colony,
+                                Hindalco Colony, Renukoot, Uttar Pradesh – 231217. Orders outside our delivery zone may
+                                be cancelled and fully refunded. Contact us to confirm if your area is covered.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            How long does delivery take?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">Standard delivery within our local area takes 1–2 business
+                                days. Same-day delivery may be available for select areas — contact us to check
+                                availability.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Is delivery free?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">Yes! Delivery is FREE on all orders above ₹100. A flat ₹40
+                                delivery charge applies to orders below ₹100.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payments -->
+                <div class="faq-category">
+                    <h2 class="faq-category-title"><i class="fas fa-credit-card"></i> Payments</h2>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            What payment methods do you accept?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">We accept Cash on Delivery (COD) and UPI payments (Google Pay,
+                                PhonePe, Paytm, etc.). For UPI, transfer to <strong>marshal9793@oksbi</strong> and enter
+                                the 12-digit UTR reference number at checkout.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Is it safe to pay online on this site?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">Yes. UPI payments are processed through your bank's secure
+                                infrastructure. We only collect a UTR reference number to verify the transaction — we
+                                never store card or bank details.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            I paid via UPI but my order isn't confirmed. What do I do?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">Please contact us at <a
+                                    href="mailto:inkandpaper97@gmail.com">inkandpaper97@gmail.com</a> with your UTR
+                                number and order reference. We'll verify and confirm your order manually within a few
+                                hours.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Returns -->
+                <div class="faq-category">
+                    <h2 class="faq-category-title"><i class="fas fa-undo-alt"></i> Returns & Refunds</h2>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            What is your return policy?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">We accept returns within 7 days of delivery for items that are
+                                damaged, defective, or incorrectly shipped. Items must be unused and in original
+                                packaging. Visit our <a href="returns.html">Returns page</a> for full details.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            How long does a refund take?
+                            <i class="fas fa-plus faq-icon"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">Once your return is approved, refunds are processed within 3–5
+                                business days. UPI refunds are instant after approval. COD refunds are issued via UPI
+                                transfer to your provided number.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="contact-cta">
+                    <h3>Still have questions?</h3>
+                    <p>Our team is happy to help. Reach out and we'll get back to you quickly.</p>
+                    <div class="contact-cta-links">
+                        <a href="mailto:inkandpaper97@gmail.com" class="contact-link"><i class="fas fa-envelope"></i>
+                            inkandpaper97@gmail.com</a>
+                        <a href="tel:+919838491752" class="contact-link"><i class="fas fa-phone"></i> +91 98384
+                            91752</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="nav-logo" style="margin-bottom:1.4rem; display:inline-flex;"><i
+                            class="fas fa-book-open"></i>&nbsp; Soni<span>&</span>Stall</a>
+                    <p style="max-width:280px; line-height:1.8; margin-top:0.5rem;">Your trusted neighbourhood book and
+                        stationery store in Renukoot, UP.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="shop.html">All Products</a>
+                    <a href="shop.html?cat=Pens">Fine Pens</a>
+                    <a href="shop.html?cat=Notebooks">Journals</a>
+                    <a href="shop.html?cat=Paper">Paper</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="faq.html">FAQ</a>
+                    <a href="shipping.html">Shipping Policy</a>
+                    <a href="returns.html">Returns</a>
+                    <a href="track.html">Track Order</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p><a href="mailto:inkandpaper97@gmail.com">inkandpaper97@gmail.com</a></p>
+                    <p><a href="tel:+919838491752">+91 98384 91752</a></p>
+                    <p style="margin-top:0.5rem; font-size:0.82rem; letter-spacing:0.04em; text-transform:uppercase;">
+                        Mon – Sat, 9am – 8pm</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Soni Book Stall. All rights reserved.
+                &ensp;&mdash;&ensp;
+                <a href="shipping.html" style="color:var(--text-muted);">Shipping</a>
+                &ensp;&middot;&ensp;
+                <a href="returns.html" style="color:var(--text-muted);">Returns</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script>
+        function toggleFaq(btn) {
+            const item = btn.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+    </script>
+</body>
+
+</html>

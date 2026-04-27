@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Returns & Refunds | Soni Book Stall</title>
+    <meta name="description" content="Soni Book Stall's return and refund policy — easy, transparent, hassle-free.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .page-hero {
+            background: var(--accent-main);
+            padding: 5rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            border: 1px solid rgba(184, 154, 90, 0.15);
+        }
+
+        .page-hero h1 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            color: #f0ebe2;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero h1 em {
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .page-hero p {
+            color: rgba(240, 235, 226, 0.65);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(240, 235, 226, 0.5);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb a {
+            color: var(--accent-gold);
+        }
+
+        .breadcrumb span {
+            color: rgba(240, 235, 226, 0.3);
+        }
+
+        .policy-section {
+            padding: 5rem 0;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            margin-bottom: 4rem;
+        }
+
+        .step-card {
+            background: var(--bg-surface);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-num {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 3rem;
+            font-weight: 300;
+            color: var(--accent-gold);
+            opacity: 0.4;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-card h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .policy-content section {
+            margin-bottom: 3rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .policy-content section:last-child {
+            border-bottom: none;
+        }
+
+        .policy-content h2 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.7rem;
+            font-weight: 400;
+            color: var(--text-main);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .policy-content h2 i {
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+        }
+
+        .policy-content p,
+        .policy-content li {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.85;
+        }
+
+        .policy-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .policy-content li {
+            margin-bottom: 0.4rem;
+        }
+
+        .info-box {
+            background: rgba(184, 154, 90, 0.07);
+            border-left: 4px solid var(--accent-gold);
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            line-height: 1.75;
+        }
+
+        .danger-box {
+            background: rgba(192, 57, 43, 0.06);
+            border-left: 4px solid var(--danger);
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            line-height: 1.75;
+        }
+
+        .contact-cta {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--accent-gold);
+            padding: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .contact-cta h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-cta p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .contact-cta-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.8rem 1.8rem;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .contact-link i {
+            color: var(--accent-gold);
+        }
+
+        @media (max-width: 768px) {
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><i class="fas fa-book-open"></i>&nbsp; Soni<span>&</span>Stall</a>
+            <div class="nav-links">
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="orders.html" class="nav-link">Orders</a>
+                <a href="cart.html" class="nav-link"><i class="fas fa-shopping-bag"></i></a>
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme"><i class="fas fa-moon"
+                        id="theme-icon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-hero">
+        <div class="container" style="position:relative; z-index:1;">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>Returns & Refunds</span>
+            </div>
+            <h1>Returns &amp; <em>Refunds</em></h1>
+            <p>Hassle-free returns within 7 days — your satisfaction is our priority.</p>
+        </div>
+    </div>
+
+    <main>
+        <div class="policy-section">
+            <div class="container">
+
+                <!-- How it works -->
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-num">01</div>
+                        <h3>Contact Us</h3>
+                        <p>Email or call us within 7 days of receiving your order with your order reference and reason.
+                        </p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">02</div>
+                        <h3>We Review</h3>
+                        <p>Our team reviews your return request within 24 hours and confirms eligibility.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">03</div>
+                        <h3>Refund Issued</h3>
+                        <p>Once approved, your refund is processed within 3–5 business days to your original payment
+                            method.</p>
+                    </div>
+                </div>
+
+                <div class="policy-content">
+
+                    <section>
+                        <h2><i class="fas fa-check-circle"></i> Eligible Returns</h2>
+                        <p>We gladly accept returns if:</p>
+                        <ul>
+                            <li>The item arrived <strong>damaged or defective</strong></li>
+                            <li>You received the <strong>wrong item</strong></li>
+                            <li>The item is significantly different from what was described</li>
+                        </ul>
+                        <div class="info-box">
+                            <i class="fas fa-calendar-alt" style="color:var(--accent-gold); margin-right:8px;"></i>
+                            Returns must be requested within <strong>7 days of delivery</strong>. Items must be unused
+                            and in their original packaging.
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2><i class="fas fa-times-circle"></i> Non-Returnable Items</h2>
+                        <p>The following items cannot be returned:</p>
+                        <ul>
+                            <li>Items damaged due to misuse or mishandling by the customer</li>
+                            <li>Items returned after the 7-day window</li>
+                            <li>Items without original packaging</li>
+                            <li>Perishable or consumable goods (e.g. ink refills once opened)</li>
+                        </ul>
+                        <div class="danger-box">
+                            <i class="fas fa-exclamation-triangle" style="color:var(--danger); margin-right:8px;"></i>
+                            Change-of-mind returns are not accepted at this time. Please review your order carefully
+                            before confirming.
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2><i class="fas fa-exchange-alt"></i> Refund Process</h2>
+                        <ul>
+                            <li><strong>UPI Payments:</strong> Refunded to your original UPI ID within 1–3 business days
+                                after approval.</li>
+                            <li><strong>Cash on Delivery:</strong> Refunded via UPI transfer to a number you provide.
+                                Please share your UPI ID when raising the request.</li>
+                        </ul>
+                        <p>You will be notified at each step of the refund process via the contact details you provided
+                            at checkout.</p>
+                    </section>
+
+                    <section>
+                        <h2><i class="fas fa-envelope"></i> How to Raise a Return</h2>
+                        <p>To start a return, contact us with the following information:</p>
+                        <ul>
+                            <li>Your <strong>order reference number</strong> (found in My Orders)</li>
+                            <li>The <strong>item(s)</strong> you wish to return</li>
+                            <li>A brief <strong>reason</strong> for the return</li>
+                            <li>A <strong>photo</strong> of the damaged/incorrect item (if applicable)</li>
+                        </ul>
+                        <div class="contact-cta" style="margin-top: 1.5rem;">
+                            <h3>Raise a Return</h3>
+                            <p>Send us your return request via email or call us directly.</p>
+                            <div class="contact-cta-links">
+                                <a href="mailto:inkandpaper97@gmail.com" class="contact-link"><i
+                                        class="fas fa-envelope"></i> inkandpaper97@gmail.com</a>
+                                <a href="tel:+919838491752" class="contact-link"><i class="fas fa-phone"></i> +91 98384
+                                    91752</a>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="nav-logo" style="margin-bottom:1.4rem; display:inline-flex;"><i
+                            class="fas fa-book-open"></i>&nbsp; Soni<span>&</span>Stall</a>
+                    <p style="max-width:280px; line-height:1.8; margin-top:0.5rem;">Your trusted neighbourhood book and
+                        stationery store in Renukoot, UP.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <a href="shop.html">All Products</a>
+                    <a href="shop.html?cat=Pens">Fine Pens</a>
+                    <a href="shop.html?cat=Notebooks">Journals</a>
+                    <a href="shop.html?cat=Paper">Paper</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="faq.html">FAQ</a>
+                    <a href="shipping.html">Shipping Policy</a>
+                    <a href="returns.html">Returns</a>
+                    <a href="track.html">Track Order</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p><a href="mailto:inkandpaper97@gmail.com">inkandpaper97@gmail.com</a></p>
+                    <p><a href="tel:+919838491752">+91 98384 91752</a></p>
+                    <p style="margin-top:0.5rem; font-size:0.82rem; letter-spacing:0.04em; text-transform:uppercase;">
+                        Mon – Sat, 9am – 8pm</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Soni Book Stall. All rights reserved.
+                &ensp;&mdash;&ensp;
+                <a href="shipping.html" style="color:var(--text-muted);">Shipping</a>
+                &ensp;&middot;&ensp;
+                <a href="returns.html" style="color:var(--text-muted);">Returns</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+</body>
+
+</html>

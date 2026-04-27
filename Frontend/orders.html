@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | Stationery Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .page-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);
+        }
+        
+        .order-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .order-id { font-weight: 600; color: var(--text-main); font-family: monospace; }
+        .order-date { color: var(--text-muted); font-size: 0.9rem; }
+        
+        .order-total { font-weight: 700; color: var(--accent-gold); font-size: 1.2rem; }
+
+        .order-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .order-item-img {
+            width: 50px; height: 50px; object-fit: contain; background: #f1f5f9; border-radius: 4px; mix-blend-mode: multiply;
+        }
+        .order-item-details { flex: 1; }
+
+        /* Timeline styles */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 2rem;
+            padding: 0 10px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 15px; left: 0; right: 0;
+            height: 3px;
+            background: var(--border-color);
+            z-index: 1;
+        }
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            width: 60px;
+        }
+        .timeline-circle {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: var(--bg-surface);
+            border: 3px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            transition: 0.3s;
+        }
+        .timeline-label { font-size: 0.75rem; color: var(--text-muted); text-align: center; }
+
+        .timeline-step.active .timeline-circle {
+            border-color: var(--accent-gold);
+            background: var(--accent-gold);
+            color: #0f172a;
+        }
+        .timeline-step.active ~ .timeline-step .timeline-circle {
+            border-color: var(--border-color);
+        }
+        .timeline-step.active .timeline-label { color: var(--accent-gold); font-weight: bold; }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-pen-nib"></i> Ink<span>&</span>Paper
+            </a>
+            <div class="nav-links" id="auth-links"></div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="page-header">
+            <h2><i class="fas fa-box-open"></i> My Orders</h2>
+            <a href="profile.html" class="btn btn-outline"><i class="fas fa-user"></i> Profile</a>
+        </div>
+
+        <div id="loading" class="loader"></div>
+        <div id="error-message" class="text-danger text-center"></div>
+
+        <div id="empty-state" class="text-center" style="display: none; padding: 4rem 0;">
+            <i class="fas fa-box" style="font-size: 4rem; color: var(--border-color); margin-bottom: 1rem;"></i>
+            <h3>No orders yet</h3>
+            <p class="text-muted mt-1 mb-2">When you place orders, they will appear here.</p>
+            <a href="index.html" class="btn btn-primary">Start Shopping</a>
+        </div>
+
+        <div id="orders-container" style="display: none;">
+            <!-- Order cards injected here -->
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Ink&Paper Stationery Shop. Built with Node.js & Vanilla JS.</p>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/orders.js"></script>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Stationery Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 2.5rem;
+            min-height: calc(100vh - 200px);
+            margin-top: 2rem;
+        }
+
+        /* Sidebar Navigation */
+        .admin-sidebar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        .admin-nav-item {
+            padding: 14px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-weight: 500;
+        }
+        .admin-nav-item:hover {
+            background: var(--bg-surface-hover);
+            color: var(--text-main);
+            transform: translateX(5px);
+        }
+        .admin-nav-item.active {
+            background: var(--accent-gold);
+            color: #1a1714;
+            box-shadow: 0 4px 12px rgba(184, 154, 90, 0.25);
+        }
+
+        /* Content Area */
+        .admin-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: 0.4s ease; }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+
+        /* Tables styling */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            margin-top: 1rem;
+        }
+        .data-table th {
+            padding: 12px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .data-table tr { transition: transform 0.2s; }
+        .data-table tbody tr:hover { transform: scale(1.005); }
+        .data-table td {
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        .data-table td:first-child { border-left: 1px solid var(--border-color); border-radius: 12px 0 0 12px; }
+        .data-table td:last-child { border-right: 1px solid var(--border-color); border-radius: 0 12px 12px 0; }
+        
+        /* Status Badges */
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+        .status-placed { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
+        .status-confirmed { background: rgba(16, 185, 129, 0.1); color: #34d399; }
+        .status-packed { background: rgba(245, 158, 11, 0.1); color: #fbbf24; }
+        .status-shipped { background: rgba(139, 92, 246, 0.1); color: #a78bfa; }
+        .status-delivered { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-cancelled { background: rgba(239, 68, 68, 0.1); color: #f87171; }
+
+        /* Product Chips */
+        .prod-chip {
+            display: inline-flex;
+            background: var(--bg-main);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin: 2px;
+            font-size: 0.8rem;
+        }
+
+        .status-dropdown {
+            background: var(--bg-main);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: inherit;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            transition: 0.2s;
+        }
+        .status-dropdown:focus { border-color: var(--accent-gold); outline: none; }
+
+        /* Out of area badge */
+        .status-out-of-delivery-area { background: rgba(239, 68, 68, 0.12); color: #f87171; }
+
+        /* Action Buttons */
+        .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+        .action-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer;
+            background: var(--bg-main); color: var(--text-muted);
+            transition: all 0.2s; font-size: 0.85rem;
+        }
+        .action-btn:hover { transform: scale(1.1); }
+        .action-btn.success { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .action-btn.danger { background: rgba(239, 68, 68, 0.12); color: #f87171; }
+
+        /* Inline stock input */
+        .inline-stock {
+            width: 70px; padding: 6px 8px; border: 1px solid var(--border-color);
+            border-radius: 6px; background: var(--bg-main); color: var(--text-main);
+            font-family: inherit; font-size: 0.9rem;
+        }
+
+        /* ─── MODAL OVERLAY ─── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            max-width: 560px;
+            width: 100%;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+        }
+        .modal-close {
+            position: absolute; top: 1rem; right: 1rem;
+            background: var(--bg-main); border: 1px solid var(--border-color);
+            color: var(--text-muted); width: 34px; height: 34px;
+            border-radius: 50%; cursor: pointer; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { color: var(--danger); border-color: var(--danger); }
+
+        @media (max-width: 1100px) {
+            .admin-layout { grid-template-columns: 1fr; }
+            .admin-sidebar { position: relative; top: 0; flex-direction: row; flex-wrap: wrap; }
+            .admin-nav-item { flex: 1; min-width: 150px; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-pen-nib"></i> Ink<span>&</span>Paper <span class="badge" style="font-size:0.6rem;background:var(--danger)">ADMIN</span>
+            </a>
+            <div class="nav-links" id="auth-links"></div>
+        </div>
+    </nav>
+
+    <main class="container">
+        
+        <div id="auth-error" style="display:none; text-align:center; padding: 4rem;">
+            <i class="fas fa-user-lock text-danger" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+            <h2>Access Denied</h2>
+            <p class="text-muted">You do not have permission to view this page. Redirecting...</p>
+        </div>
+
+        <div class="admin-layout" id="admin-dashboard" style="display:none;">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar">
+                <div class="admin-nav-item active" onclick="switchAdminTab('payments', this)">
+                    <i class="fas fa-money-check-alt"></i> Payments 
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminTab('orders', this)">
+                    <i class="fas fa-box-open"></i> Manage Orders
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminTab('products', this)">
+                    <i class="fas fa-tags"></i> Manage Products
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminTab('coupons', this)">
+                    <i class="fas fa-ticket-alt"></i> Manage Coupons
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminTab('subscribers', this)">
+                    <i class="fas fa-users"></i> Inner Circle
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <section class="admin-content">
+                
+                <!-- 1. PAYMENTS TAB -->
+                <div id="tab-payments" class="tab-content active">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                        <h2>Payments Verification</h2>
+                        <button class="btn btn-outline" onclick="loadAdminPayments()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    <p class="text-muted mb-2">Check UTR numbers against your bank statement. If received, verify the payment to advance the order.</p>
+                    
+                    <div style="overflow-x:auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>UTR / Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-payments">
+                                <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. ORDERS TAB -->
+                <div id="tab-orders" class="tab-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                         <h2>Orders Hub</h2>
+                         <button class="btn btn-outline" onclick="loadAdminOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    <p class="text-muted mb-2">Track and enforce statuses for all customer orders globally.</p>
+                    
+                    <div style="overflow-x:auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order.ID</th>
+                                    <th>Customer</th>
+                                    <th>Contact</th>
+                                    <th>Products Ordered</th>
+                                    <th>Delivery Details</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-orders">
+                                <tr><td colspan="4" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. PRODUCTS TAB -->
+                <div id="tab-products" class="tab-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                        <h2>Product Catalog</h2>
+                        <button class="btn btn-primary" onclick="openModal('product-modal')"><i class="fas fa-plus"></i> Add Product</button>
+                    </div>
+                    
+                    <div style="display:flex; gap: 10px; margin-bottom: 1rem;">
+                        <input type="text" id="admin-prod-search" class="form-control" placeholder="Search products..." style="max-width: 300px;">
+                        <select id="admin-prod-sort" class="form-control" style="width: auto;">
+                            <option value="">Default Sort</option>
+                            <option value="price_asc">Price Low-High</option>
+                            <option value="price_desc">Price High-Low</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="loadAdminProducts()">Filter</button>
+                    </div>
+                    
+                    <div style="overflow-x:auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-products">
+                                <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. COUPONS TAB -->
+                <div id="tab-coupons" class="tab-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                        <h2>Discount Codes</h2>
+                        <button class="btn btn-primary" onclick="openModal('coupon-modal')"><i class="fas fa-plus"></i> New Coupon</button>
+                    </div>
+                    
+                    <div style="overflow-x:auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Discount</th>
+                                    <th>Expiry</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-coupons">
+                                <tr><td colspan="4" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5. SUBSCRIBERS TAB -->
+                <div id="tab-subscribers" class="tab-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                        <h2>Inner Circle Subscribers</h2>
+                        <button class="btn btn-outline" onclick="loadAdminSubscribers()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    
+                    <div style="overflow-x:auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Subscribed At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-subscribers">
+                                <tr><td colspan="2" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal: Add Product -->
+    <div id="product-modal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('product-modal')">&times;</button>
+            <h3 class="mb-2">New Product Entry</h3>
+            <form id="form-product">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" id="add-prod-name" class="form-control" placeholder="e.g. Vintage Quill" required>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="form-group">
+                        <label class="form-label">Price (₹)</label>
+                        <input type="number" id="add-prod-price" class="form-control" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stock Qty</label>
+                        <input type="number" id="add-prod-stock" class="form-control" required min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="url" id="add-prod-img" class="form-control" placeholder="https://..." required>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="form-group">
+                        <label class="form-label">Brand</label>
+                        <input type="text" id="add-prod-brand" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select id="add-prod-cat" class="form-control" required>
+                            <option value="Pens">Pens</option>
+                            <option value="Notebooks">Notebooks</option>
+                            <option value="Paper">Paper</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Stationery">Stationery</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="add-prod-desc" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-save"></i> Save Product</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Coupon -->
+    <div id="coupon-modal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('coupon-modal')">&times;</button>
+            <h3 class="mb-2">Generate Coupon Code</h3>
+            <form id="form-coupon">
+                <div class="form-group">
+                    <label class="form-label">Code (e.g. SUMMER20)</label>
+                    <input type="text" id="add-coup-code" class="form-control" required style="text-transform: uppercase;" placeholder="SAVE10">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="form-group">
+                        <label class="form-label">Discount Type</label>
+                        <select id="add-coup-type" class="form-control" required>
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="flat">Flat (₹)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Discount Value</label>
+                        <input type="number" id="add-coup-pct" class="form-control" required min="1" placeholder="e.g. 20">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="form-group">
+                        <label class="form-label">Max Discount Cap (₹) <small class="text-muted">optional</small></label>
+                        <input type="number" id="add-coup-max" class="form-control" min="0" placeholder="e.g. 200">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Min Order Amount (₹)</label>
+                        <input type="number" id="add-coup-min" class="form-control" min="0" value="0" placeholder="0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="form-group">
+                        <label class="form-label">Valid Until</label>
+                        <input type="date" id="add-coup-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Usage Limit <small class="text-muted">optional</small></label>
+                        <input type="number" id="add-coup-limit" class="form-control" min="1" placeholder="unlimited">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-check"></i> Activate Coupon</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Out of Delivery Area Confirmation -->
+    <div id="ood-confirm-modal" class="modal-overlay" style="display:none;">
+        <div class="modal" style="max-width:440px; text-align:center;">
+            <div style="width:64px; height:64px; border-radius:50%; background:rgba(239,68,68,0.12); display:flex; align-items:center; justify-content:center; margin: 0 auto 1.5rem; font-size:1.8rem; color:#f87171;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="font-size:1.3rem; margin-bottom:0.5rem;">Out of Delivery Area?</h3>
+            <p id="ood-modal-msg" class="text-muted" style="font-size:0.9rem; line-height:1.6; margin-bottom:1.8rem;"></p>
+            <div id="ood-payment-badge" style="margin-bottom:1.5rem;"></div>
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <button id="ood-no-btn" class="btn btn-outline" style="min-width:100px;" onclick="closeModal('ood-confirm-modal'); revertOrderStatusDropdown();">
+                    <i class="fas fa-times"></i> No, Keep
+                </button>
+                <button id="ood-yes-btn" class="btn" style="min-width:100px; background:#ef4444; color:#fff;" onclick="confirmOutOfArea()">
+                    <i class="fas fa-check"></i> Yes, Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

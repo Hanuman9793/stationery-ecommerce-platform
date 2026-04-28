@@ -135,9 +135,8 @@ Contributions are welcome! Please follow these steps:
 
 Have a question or suggestion? Reach out to us:
 
-- 📧 Email: hello@inkandpaper.com
-- 🌐 Website: [www.inkandpaper.com](https://www.inkandpaper.com)
-- 📸 Instagram: [@inkandpaper](https://instagram.com/inkandpaper)
+- 📧 Email: inkandpaper97@gmail.com
+- 🌐 Website: https://stationery-ecommerce-platform-1.onrender.com
 
 ---
 
